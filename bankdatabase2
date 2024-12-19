@@ -1,0 +1,498 @@
+Enter password: *****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.36 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| 1bm23cs247         |
+| bank_database      |
+| college            |
+| emp                |
+| emp23              |
+| emp2356            |
+| emp9695            |
+| emp9696            |
+| employee           |
+| employees          |
+| hospital           |
+| information_schema |
+| insurance          |
+| lab_1              |
+| mysql              |
+| newdatabase        |
+| performance_schema |
+| sakila             |
+| sys                |
+| world              |
++--------------------+
+20 rows in set (0.00 sec)
+
+mysql> use bank_database;
+Database changed
+mysql> show tables;
++-------------------------+
+| Tables_in_bank_database |
++-------------------------+
+| bankaccount             |
+| bankcustomer            |
+| branch                  |
+| depositer               |
+| loan                    |
+| loans                   |
++-------------------------+
+6 rows in set (0.00 sec)
+
+mysql> show * from bankaccount;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '* from bankaccount' at line 1
+mysql> select * from bankaccount;
++-------------------+-------+---------+
+| branch_name       | accno | balance |
++-------------------+-------+---------+
+| SBI_Chamrajpet    |     1 |    2000 |
+| SBI_ResidencyRoad |     2 |    5000 |
+| SBI_ShivajiRoad   |     3 |    6000 |
+| SBI_ParlimentRoad |     4 |    9000 |
+| SBI_Jantarmantar  |     5 |    8000 |
+| SBI_ShivajiRoad   |     6 |    4000 |
+| SBI_ResidencyRoad |     8 |    4000 |
+| SBI_ParlimentRoad |     9 |    3000 |
+| SBI_ResidencyRoad |    10 |    5000 |
+| SBI_Jantarmantar  |    11 |    2000 |
++-------------------+-------+---------+
+10 rows in set (0.01 sec)
+
+mysql> select * from bankcustomer;
++---------------+----------------------+---------------+
+| customer_name | customer_street      | customer_city |
++---------------+----------------------+---------------+
+| Avinash       | Bull_Temple_Road     | Bangalore     |
+| Dinesh        | Bannerghatta_Road    | Bangalore     |
+| Mohan         | NationalCollege_Road | Bangalore     |
+| Nikhil        | Akbar_Road           | Delhi         |
+| Ravi          | Prithviraj_Road      | Delhi         |
++---------------+----------------------+---------------+
+5 rows in set (0.01 sec)
+
+mysql> select * from branch;
++-------------------+-------------+--------+
+| branch_name       | branch_city | assets |
++-------------------+-------------+--------+
+| SBI_Chamrajpet    | Bangalore   |  50000 |
+| SBI_Jantarmantar  | Delhi       |  20000 |
+| SBI_ParlimentRoad | Delhi       |  10000 |
+| SBI_ResidencyRoad | Bangalore   |  10000 |
+| SBI_ShivajiRoad   | Bombay      |  20000 |
++-------------------+-------------+--------+
+5 rows in set (0.01 sec)
+
+mysql> select * from depositer;
++---------------+-------+
+| customer_name | accno |
++---------------+-------+
+| Avinash       |     1 |
+| Dinesh        |     2 |
+| Nikhil        |     4 |
+| Ravi          |     5 |
+| Avinash       |     8 |
+| Nikhil        |     9 |
+| Dinesh        |    10 |
+| Nikhil        |    11 |
++---------------+-------+
+8 rows in set (0.01 sec)
+
+mysql> select * from loan;
++-------------+-------------------+--------+
+| loan_number | branch_name       | amount |
++-------------+-------------------+--------+
+|           1 | SBI_Chamrajpet    |   1000 |
+|           2 | SBI_ResidencyRoad |   2000 |
+|           3 | SBI_ShivajiRoad   |   3000 |
+|           4 | SBI_ParlimentRoad |   4000 |
+|           5 | SBI_Jantarmantar  |   5000 |
++-------------+-------------------+--------+
+5 rows in set (0.01 sec)
+
+mysql> select * from loans;
++-------------------+------------+
+| branch            | total_loan |
++-------------------+------------+
+| SBI_Chamrajpet    |       1000 |
+| SBI_Jantarmantar  |       5000 |
+| SBI_ParlimentRoad |       4000 |
+| SBI_ResidencyRoad |       2000 |
+| SBI_ShivajiRoad   |       3000 |
++-------------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT DISTINCT c.customer_name
+    -> FROM BankCustomer c
+    -> JOIN LOAN l ON c.customer_name = l.customer_name
+    -> WHERE c.customer_name NOT IN (SELECT DISTINCT d.customer_name FROM Depositer d);
+ERROR 1054 (42S22): Unknown column 'l.customer_name' in 'on clause'
+mysql> CREATE view BranchLoan as
+    -> select branch_name, sum(amount) as TotalLoan
+    -> from loan
+    -> group by branch_name;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from BranchLoan;
++-------------------+-----------+
+| branch_name       | TotalLoan |
++-------------------+-----------+
+| SBI_Chamrajpet    |      1000 |
+| SBI_Jantarmantar  |      5000 |
+| SBI_ParlimentRoad |      4000 |
+| SBI_ResidencyRoad |      2000 |
+| SBI_ShivajiRoad   |      3000 |
++-------------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> select branch_name, (assets/100000) as 'assets in lakhs'
+    -> from branch;
++-------------------+-----------------+
+| branch_name       | assets in lakhs |
++-------------------+-----------------+
+| SBI_Chamrajpet    |             0.5 |
+| SBI_Jantarmantar  |             0.2 |
+| SBI_ParlimentRoad |             0.1 |
+| SBI_ResidencyRoad |             0.1 |
+| SBI_ShivajiRoad   |             0.2 |
++-------------------+-----------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT DISTINCT c.customer_name
+    -> FROM BankCustomer c
+    -> JOIN Depositer d ON c.customer_name = d.customer_name
+    -> JOIN BankAccount a ON d.accno = a.accno
+    -> JOIN Branch b ON a.branch_name = b.branch_name
+    -> WHERE b.branch_city = 'Delhi'
+    -> GROUP BY c.customer_name
+    -> HAVING COUNT(DISTINCT a.branch_name) = (SELECT COUNT(DISTINCT branch_name)
+    ->                                         FROM Branch
+    ->                                         WHERE branch_city = 'Delhi');
++---------------+
+| customer_name |
++---------------+
+| Nikhil        |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> select custome_name
+    -> ;
+ERROR 1054 (42S22): Unknown column 'custome_name' in 'field list'
+mysql> select c.customer_name
+    -> from BankCustomer c, Depositer d, BankAccount a, Branch b
+    -> where c.customer_name = d.customer_name and d.accno = a.accno and a.branch_name = b.branch_name and b.branch_city = 'Delhi';
++---------------+
+| customer_name |
++---------------+
+| Ravi          |
+| Nikhil        |
+| Nikhil        |
+| Nikhil        |
++---------------+
+4 rows in set (0.00 sec)
+
+mysql> select c.customer_name
+    -> from BankCustomer c, Depositer d, BankAccount a, Branch b
+    -> where c.customer_name = d.customer_name and d.accno = a.accno and a.branch_name = b.branch_name and b.branch_city = 'Delhi'
+    -> group by c.customer_name
+    -> having count(distinct a.branch_name) = (select count(distinct branch_name)
+    ->                                          from Branch
+    ->                                          where branch_city = 'Delhi');
++---------------+
+| customer_name |
++---------------+
+| Nikhil        |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> select *
+    -> from BankCustomer c, Depositer d, BankAccount a, Branch b
+    -> where c.customer_name = d.customer_name and d.accno = a.accno and a.branch_name = b.branch_name and b.branch_city = 'Delhi'
+    -> group by c.customer_name ;
+ERROR 1055 (42000): Expression #5 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'bank_database.d.accno' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> select *
+    -> from BankCustomer c, Depositer d, BankAccount a, Branch b
+    -> where c.customer_name = d.customer_name and d.accno = a.accno and a.branch_name = b.branch_name and b.branch_city = 'Delhi';
++---------------+-----------------+---------------+---------------+-------+-------------------+-------+---------+-------------------+-------------+--------+
+| customer_name | customer_street | customer_city | customer_name | accno | branch_name       | accno | balance | branch_name       | branch_city | assets |
++---------------+-----------------+---------------+---------------+-------+-------------------+-------+---------+-------------------+-------------+--------+
+| Ravi          | Prithviraj_Road | Delhi         | Ravi          |     5 | SBI_Jantarmantar  |     5 |    8000 | SBI_Jantarmantar  | Delhi       |  20000 |
+| Nikhil        | Akbar_Road      | Delhi         | Nikhil        |    11 | SBI_Jantarmantar  |    11 |    2000 | SBI_Jantarmantar  | Delhi       |  20000 |
+| Nikhil        | Akbar_Road      | Delhi         | Nikhil        |     4 | SBI_ParlimentRoad |     4 |    9000 | SBI_ParlimentRoad | Delhi       |  10000 |
+| Nikhil        | Akbar_Road      | Delhi         | Nikhil        |     9 | SBI_ParlimentRoad |     9 |    3000 | SBI_ParlimentRoad | Delhi       |  10000 |
++---------------+-----------------+---------------+---------------+-------+-------------------+-------+---------+-------------------+-------------+--------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT DISTINCT c.customer_name
+    -> FROM BankCustomer c
+    -> JOIN LOAN l ON c.customer_name = l.customer_name
+    -> WHERE c.customer_name NOT IN (SELECT DISTINCT d.customer_name FROM Depositer d);
+ERROR 1054 (42S22): Unknown column 'l.customer_name' in 'on clause'
+mysql> SELECT DISTINCT c.customer_name
+    -> FROM BankCustomer c
+    -> JOIN LOAN l ON c.customer_name = l.customer_name
+    -> WHERE c.customer_name NOT IN (
+    ->     SELECT d.customer_name
+    ->     FROM Depositer d
+    -> );
+ERROR 1054 (42S22): Unknown column 'l.customer_name' in 'on clause'
+mysql> create table Borrower(loan_number int, customer_name varchar(30), primary key(loan_number, customer_name), foreign key(loan_number) references Loan(loan_number) , foreign key(customer_name)  references
+BankCustomer(customer_name);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> create table Borrower(loan_number int, customer_name varchar(30), primary key(loan_number, customer_name), foreign key(loan_number) references Loan(loan_number) , foreign key(customer_name)  references BankCustomer(customer_name));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc Borrower;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| loan_number   | int         | NO   | PRI | NULL    |       |
+| customer_name | varchar(30) | NO   | PRI | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> insert into Borrower values(1,'Avinash');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrower values(2,'Dinesh');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrower values(3,'Ramesh');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`bank_database`.`borrower`, CONSTRAINT `borrower_ibfk_2` FOREIGN KEY (`customer_name`) REFERENCES `bankcustomer` (`customer_name`))
+mysql> insert into Borrower values(4,'Nikhil');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> alter table borrower drop foreign key(customer_name);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(customer_name)' at line 1
+mysql> alter table Borrower
+    -> drop foreign key customer_name;
+ERROR 1091 (42000): Can't DROP 'customer_name'; check that column/key exists
+mysql> drop table Borrower;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create table Borrower(loan_number int, customer_name varchar(30), primary key(loan_number, customer_name), foreign key(loan_number) references Loan(loan_number));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into Borrower values(1,'Avinash');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrower values(2,'Dinesh');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrower values(3,'Ramesh');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrower values(4,'Nikhil');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Borrower values(5,'Prithvi');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from Borrower;
++-------------+---------------+
+| loan_number | customer_name |
++-------------+---------------+
+|           1 | Avinash       |
+|           2 | Dinesh        |
+|           3 | Ramesh        |
+|           4 | Nikhil        |
+|           5 | Prithvi       |
++-------------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT DISTINCT b.customer_name
+    -> FROM Borrower b
+    -> WHERE b.customer_name NOT IN (
+    ->     SELECT d.customer_name
+    ->     FROM Depositer d
+    -> );
++---------------+
+| customer_name |
++---------------+
+| Ramesh        |
+| Prithvi       |
++---------------+
+2 rows in set (0.00 sec)
+
+mysql>
+                                                                                                                                                                      ;
+ERROR:
+No query specified
+
+mysql> SELECT DISTINCT c.customer_name
+    -> FROM BankCustomer c
+    -> JOIN Depositer d ON c.customer_name = d.customer_name
+    -> JOIN BankAccount a ON d.accno = a.accno
+    -> JOIN Borrower b ON c.customer_name = b.customer_name
+    -> JOIN LOAN l ON b.loan_number = l.loan_number
+    -> WHERE a.branch_name = 'Bangalore' AND l.branch_name = 'Bangalore';
+Empty set (0.00 sec)
+
+mysql> SELECT DISTINCT c.customer_name
+    -> FROM BankCustomer c
+    -> JOIN Depositer d ON c.customer_name = d.customer_name
+    -> JOIN BankAccount a ON d.accno = a.accno
+    -> JOIN Borrower br ON c.customer_name = br.customer_name
+    -> JOIN LOAN l ON br.loan_number = l.loan_number
+    -> WHERE a.branch_name = 'Bangalore' AND l.branch_name = 'Bangalore';
+Empty set (0.00 sec)
+
+mysql>
+mysql> SELECT DISTINCT b.customer_name
+    -> FROM Borrower b
+    -> WHERE b.customer_name IN (
+    ->     SELECT d.customer_name
+    ->     FROM Depositer d);
++---------------+
+| customer_name |
++---------------+
+| Avinash       |
+| Dinesh        |
+| Nikhil        |
++---------------+
+3 rows in set (0.00 sec)
+
+mysql> select distinct b.customer_name
+    -> from borrower b
+    -> ;
++---------------+
+| customer_name |
++---------------+
+| Avinash       |
+| Dinesh        |
+| Ramesh        |
+| Nikhil        |
+| Prithvi       |
++---------------+
+5 rows in set (0.00 sec)
+
+mysql> select distinct b.customer_name
+    -> from borrower b, loan l, depositer d, BankAccount a, Branch br
+    -> where b.loan_number = l.loan_number and b.customer_name = d.customer_name and d.accno = a.accno and a.branch_name = br.branch_name and br.branch_city  = 'Bangalore';
++---------------+
+| customer_name |
++---------------+
+| Avinash       |
+| Dinesh        |
++---------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT b.branch_name
+    -> FROM Branch b
+    -> WHERE b.assets > (SELECT MAX(b2.assets)
+    ->                   FROM Branch b2
+    ->                   WHERE b2.branch_city = 'Bangalore');
+Empty set (0.00 sec)
+
+mysql> insert into Branch('SBI_Lokhandwala', 'Bombay', 60000);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''SBI_Lokhandwala', 'Bombay', 60000)' at line 1
+mysql> insert into Branch values('SBI_Lokhandwala', 'Bombay', 60000);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT b.branch_name
+    -> FROM Branch b
+    -> WHERE b.assets > (SELECT MAX(b2.assets)
+    ->                   FROM Branch b2
+    ->                   WHERE b2.branch_city = 'Bangalore');
++-----------------+
+| branch_name     |
++-----------------+
+| SBI_Lokhandwala |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> create table BankAccount_Clone like BankAccount;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into BankAccount_Clone select * from BankAccount;
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> selct * from BankAccount;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'selct * from BankAccount' at line 1
+mysql> select * from BankAccount;
++-------------------+-------+---------+
+| branch_name       | accno | balance |
++-------------------+-------+---------+
+| SBI_Chamrajpet    |     1 |    2000 |
+| SBI_ResidencyRoad |     2 |    5000 |
+| SBI_ShivajiRoad   |     3 |    6000 |
+| SBI_ParlimentRoad |     4 |    9000 |
+| SBI_Jantarmantar  |     5 |    8000 |
+| SBI_ShivajiRoad   |     6 |    4000 |
+| SBI_ResidencyRoad |     8 |    4000 |
+| SBI_ParlimentRoad |     9 |    3000 |
+| SBI_ResidencyRoad |    10 |    5000 |
+| SBI_Jantarmantar  |    11 |    2000 |
++-------------------+-------+---------+
+10 rows in set (0.00 sec)
+
+mysql> DELETE FROM BankAccount
+    -> WHERE branch_name IN (SELECT branch_name FROM Branch WHERE branch_city = 'Bombay');
+Query OK, 2 rows affected (0.01 sec)
+
+mysql> select * from BankAccount;
++-------------------+-------+---------+
+| branch_name       | accno | balance |
++-------------------+-------+---------+
+| SBI_Chamrajpet    |     1 |    2000 |
+| SBI_ResidencyRoad |     2 |    5000 |
+| SBI_ParlimentRoad |     4 |    9000 |
+| SBI_Jantarmantar  |     5 |    8000 |
+| SBI_ResidencyRoad |     8 |    4000 |
+| SBI_ParlimentRoad |     9 |    3000 |
+| SBI_ResidencyRoad |    10 |    5000 |
+| SBI_Jantarmantar  |    11 |    2000 |
++-------------------+-------+---------+
+8 rows in set (0.00 sec)
+
+mysql> selct * from lo9an;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'selct * from lo9an' at line 1
+mysql> selct * from loan;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'selct * from loan' at line 1
+mysql> select * from loan;
++-------------+-------------------+--------+
+| loan_number | branch_name       | amount |
++-------------+-------------------+--------+
+|           1 | SBI_Chamrajpet    |   1000 |
+|           2 | SBI_ResidencyRoad |   2000 |
+|           3 | SBI_ShivajiRoad   |   3000 |
+|           4 | SBI_ParlimentRoad |   4000 |
+|           5 | SBI_Jantarmantar  |   5000 |
++-------------+-------------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> UPDATE BankAccount
+    -> SET balance = balance * 1.05;
+Query OK, 8 rows affected (0.00 sec)
+Rows matched: 8  Changed: 8  Warnings: 0
+
+mysql> selct * from BankAccount;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'selct * from BankAccount' at line 1
+mysql> select * from BankAccount;
++-------------------+-------+---------+
+| branch_name       | accno | balance |
++-------------------+-------+---------+
+| SBI_Chamrajpet    |     1 |    2100 |
+| SBI_ResidencyRoad |     2 |    5250 |
+| SBI_ParlimentRoad |     4 |    9450 |
+| SBI_Jantarmantar  |     5 |    8400 |
+| SBI_ResidencyRoad |     8 |    4200 |
+| SBI_ParlimentRoad |     9 |    3150 |
+| SBI_ResidencyRoad |    10 |    5250 |
+| SBI_Jantarmantar  |    11 |    2100 |
++-------------------+-------+---------+
+8 rows in set (0.00 sec)
