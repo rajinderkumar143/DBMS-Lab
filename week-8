@@ -1,0 +1,37 @@
+
+use student_db
+
+db.createCollection("Student");
+
+db.Student.insert({RollNo:8,Age:21,Cont:9900990099,email:"rajavd@gmail.com"});
+db.Student.insert({RollNo:9,Age:22,Cont:9998734989,email:"vishwanathd@gmail.com"});
+db.Student.insert({RollNo:10,Age:20,Cont:987894989,email:"vidit@gmail.com"});
+db.Student.insert({RollNo:12,Age:20,Cont:678894989,email:"girish@gmail.com"});
+db.Student.insert({RollNo:13,Age:20,Cont:678904999,email:"ramesh@gmail.com"});
+
+db.Student.find()
+
+ db.Student.insert({RollNo:11,Age:20,Name:"ABC",Cont:678904999,email:"ramesh@gmail.com"});
+
+ db.Student.find()
+
+  db.Student.update({RollNo:10},{$set:{email:"vidit23@gmail.com"}})
+db.Student.find()
+
+db.Student.update({RollNo:11,Name:"ABC"},{$set:{Name:"FEM"}})
+db.Student.find()
+  
+mongoexport --uri="mongodb+srv://rajavishwanathcs23:Raja1234@dbms-cluster.q3hu5.mongodb.net/student_db" --collection=Student --type=json --out="C:\\Users\\student\\Desktop\\output.json"
+
+db.Student.drop()
+db.Student.find()
+
+ mongoimport --uri="mongodb+srv://rajavishwanathcs23:Raja1234@dbms-cluster.q3hu5.mongodb.net/student_db" --collection=Food --type=csv --fields="Food,Food Type,Color" --file="C:\Users\student\Desktop\DBMS_LAB8.csv"
+db.Food.find()
+
+{"_id":{"$oid":"67613d02835ad888439536c3"},"RollNo":8,"Age":21,"Cont":9.900990099E+09,"email":"rajavd@gmail.com"}
+{"_id":{"$oid":"67613d20835ad888439536c4"},"RollNo":9,"Age":22,"Cont":9.998734989E+09,"email":"vishwanathd@gmail.com"}
+{"_id":{"$oid":"67613d92835ad888439536c5"},"RollNo":10,"Age":20,"Cont":987894989,"email":"vidit23@gmail.com"}
+{"_id":{"$oid":"67613db8835ad888439536c6"},"RollNo":12,"Age":20,"Cont":678894989,"email":"girish@gmail.com"}
+{"_id":{"$oid":"67613de0835ad888439536c7"},"RollNo":13,"Age":20,"Cont":678904999,"email":"ramesh@gmail.com"}
+{"_id":{"$oid":"67613e73835ad888439536c8"},"RollNo":11,"Age":20,"Name":"FEM","Cont":678904999,"email":"ramesh@gmail.com"}
